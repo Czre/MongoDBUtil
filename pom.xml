@@ -52,6 +52,10 @@
             <version>3.3.2</version>
         </dependency>
         <!--mongodb jar包 end-->
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>20.0</version>
+        </dependency>
     </dependencies>
 </project>

@@ -1,71 +1,83 @@
 package com.czre.mongo.util;
 
-import com.czre.mongo.util.MongoDBOperationImpl.FuzzyQuery;
-import org.bson.Document;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
+import com.mongodb.BasicDBObject;
+import org.bson.Document;
+import com.czre.mongo.util.MongoDBOperationImpl.FuzzyQuery;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by czre on 2018/2/7
- */
-public interface MongoDBOperation {
-    /****************条件拼接***************/
-    // 文档定位接口
-    void query(String key, Object value);
+public interface MongoDBOperation<MongoDBVo> {
 
-    FuzzyQuery query(String key);
+    /********************************************************************************** 条件拼接 **********************************************************************************/
 
-    FuzzyQuery query();
+    /************************************************** 文档定位接口 **************************************************/
 
-    // 挑选与排序的接口
-    void select(String key, int value);
+    public abstract void query(String key, Object val);
 
-    void sort(String key, int value);
+    public abstract FuzzyQuery query(String key);
 
-    // 更新条件接口
-    void set(String key, int value);
+    public abstract FuzzyQuery query();
 
-    void push(String key, int value);
+    /************************************************** 挑选与排序的接口 **************************************************/
 
-    void pull(String key, int value);
+    public abstract void select(String key, int val);
 
-    void unset(String key);
+    public abstract void sort(String key, int val);
 
-    void inc(String key, int value);
+    /************************************************** 更新条件接口 **************************************************/
+    public abstract void set(String key, Object val);
 
-    /****************操作数据库***************/
-    // 添加接口
-    boolean insertOne(Object obj);
+    public abstract void push(String key, Object val);
 
-    // 删除接口(文档定位)
-    boolean deleteOne();
+    public abstract void pull(String key, Object val);
 
-    boolean deleteMany();
+    void push(String key, String val);
 
-    // 更新接口(文档定位/更新条件)
-    boolean updateOne();
+    public abstract void unset(String key);
 
-    boolean updateMany();
+    public abstract void inc(String key, Object val);
 
-    // 查询接口-BackBean (文档定位/挑选/排序)
-    Object selectOneBackBean() throws InvocationTargetException, IntrospectionException, InstantiationException, IllegalAccessException;
+    /********************************************************************************** 操作数据库 **********************************************************************************/
 
-    @SuppressWarnings("rawtypes")
-    List selectManyBackBean() throws InvocationTargetException, IntrospectionException, InstantiationException, IllegalAccessException;
+    /************************************************** 添加接口 **************************************************/
 
-    MongoDBPage selectPageReturnBean(MongoDBPage page) throws InvocationTargetException, IntrospectionException, InstantiationException, IllegalAccessException;
+    public abstract boolean insertMany(List<Document> docs);
 
-    Object selectMostBackBean() throws InvocationTargetException, IntrospectionException, InstantiationException, IllegalAccessException;
+    public abstract boolean insertOne(Object obj);
 
-    // 查询接口-BackDoc (文档定位/挑选/排序)
-    Document selectOneBackDoc();
+    public boolean insertOne(Document doc);
 
-    List<Document> selectManyBackDoc();
+    /************************************************** 删除接口（文档定位） **************************************************/
 
-    Map<String, Object> selectPageBackDoc(MongoDBPage page);
+    public abstract boolean deleteOne();
 
-    Document selectMostBackDoc();
+    public abstract boolean deleteMany();
+
+    /************************************************** 更新接口（文档定位/更新条件） **************************************************/
+    public abstract boolean updateOne();
+
+    public abstract boolean updateMany();
+
+    /************************************************** 查询接口-BackBean（文档定位/挑选/排序） **************************************************/
+
+    public abstract Object selectOneBackBean(Class<MongoDBVo> T);
+
+    public abstract List selectManyBackBean(Class<MongoDBVo> T);
+
+    public abstract List selectPageBackBean(Class<MongoDBVo> T, MongoDBPage page) throws Exception;
+
+    public abstract Object selectMostBackBean(Class<MongoDBVo> T) throws Exception;
+
+    /************************************************** 查询接口-BackDoc（文档定位/挑选/排序） **************************************************/
+
+    public abstract Document selectOneBackDoc() throws Exception;
+
+    public abstract List<Document> selectManyBackDoc();
+
+    public abstract Map<String, Object> selectPageBackDoc(MongoDBPage page) throws Exception;
+
+    public abstract Document selectMostBackDoc() throws Exception;
+
+    public List<Document> aggregate(List<BasicDBObject> list);
 }

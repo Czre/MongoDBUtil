@@ -1,58 +1,31 @@
 package com.czre.mongo.util;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by czre on 2018/2/7
- */
 public class MongoDBPage {
-    private int size;
-    private int number;
-    private int total;
-    private int count;
-    private ArrayList<Object> result;
 
-    public MongoDBPage(int size, int number) {
-        this.size = size;
-        this.number = number;
+    private int pageSize; // 每页的容量
+    private int currentPage; // 当前页
+    private int rowCount; // 总条数
+    private int pageCount; // 总页数
+
+    private List data;
+
+    public List getData() {
+        return data;
     }
 
-    public int getSize() {
-        return size;
+    public void setData(List data) {
+        this.data = data;
     }
 
-    public void setSize(int size) {
-        this.size = size;
+    public MongoDBPage(int pageSize, int currentPage) {
+        this.pageSize = pageSize;
+        this.currentPage = currentPage;
     }
 
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public void setTotal(int total) {
-        this.total = total;
-    }
-
-    public int getCount() {
-        if (total % size == 0) {
-            count = total / size;
-        } else {
-            count = total / size + 1;
-        }
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
+    private ArrayList<Object> result;// 结果集
 
     public ArrayList<Object> getResult() {
         return result;
@@ -60,5 +33,42 @@ public class MongoDBPage {
 
     public void setResult(ArrayList<Object> result) {
         this.result = result;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(int currentPage) {
+        this.currentPage = currentPage;
+    }
+
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
+    }
+
+    public int getPageCount() {
+        if (rowCount % pageSize == 0) {
+            pageCount = rowCount / pageSize;
+        } else {
+            pageCount = rowCount / pageSize + 1;
+        }
+        return pageCount;
+    }
+
+    public void setPageCount(int pageCount) {
+        this.pageCount = pageCount;
     }
 }

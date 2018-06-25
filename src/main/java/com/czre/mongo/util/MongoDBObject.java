@@ -1,5 +1,6 @@
 package com.czre.mongo.util;
 
+
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
@@ -7,39 +8,48 @@ import com.mongodb.client.MongoDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-/**
- * Created by czre on 2018/2/6
- */
 public class MongoDBObject {
-
-    public static final String HOST = PropertyConstants.getPropertiesKey("host");
-    public static final int PORT = Integer.parseInt(PropertyConstants.getPropertiesKey("port"));
-    public static final String USERNAME = PropertyConstants.getPropertiesKey("username");
-    public static final String PASSWORD = PropertyConstants.getPropertiesKey("password");
-    public static final String LOGINDATABASE = PropertyConstants.getPropertiesKey("loginDataBase");
-    public static final String USEDATABASE = PropertyConstants.getPropertiesKey("useDatabase");
-
     private static MongoClient mongoClient;
-    private static MongoDatabase mongoDB;
+    private static MongoDatabase db;
 
     static {
         init();
     }
 
     private static void init() {
-        System.out.println(HOST);
-        ServerAddress serverAddress = new ServerAddress(HOST, PORT);
-        List<ServerAddress> addresses = new ArrayList<ServerAddress>();
-        addresses.add(serverAddress);
-        MongoCredential credential = MongoCredential.createScramSha1Credential(USERNAME, LOGINDATABASE, PASSWORD.toCharArray());
-        List<MongoCredential> credentials = new ArrayList<MongoCredential>();
-        credentials.add(credential);
-        mongoClient = new MongoClient(addresses, credentials);
-        mongoDB = mongoClient.getDatabase(USEDATABASE);
+        Map<String, String> getenv = System.getenv();
+        String ipAddress = getenv.get("MONGO_HOST");
+        int portNumber = Integer.parseInt(getenv.get("MONGO_PORT"));
+        String userName = getenv.get("MONGO_USERNAME");
+        String passWord = getenv.get("MONGO_PASSWORD");
+        String logindataBase = getenv.get("MONGO_LOGIN_DATABASE");
+        String usedataBase = getenv.get("MONGO_USE_DATABASE");
+        if (passWord.trim().equals("")) {
+            mongoClient = new MongoClient(ipAddress, portNumber);
+            db = mongoClient.getDatabase(usedataBase);
+            return;
+        }
+        try {
+
+            ServerAddress serverAddress = new ServerAddress(ipAddress, portNumber);
+            List<ServerAddress> addrs = new ArrayList<ServerAddress>();
+            addrs.add(serverAddress);
+
+            MongoCredential credential = MongoCredential.createScramSha1Credential(userName, logindataBase, passWord.toCharArray());
+
+            List<MongoCredential> credentials = new ArrayList<MongoCredential>();
+            credentials.add(credential);
+            mongoClient = new MongoClient(addrs, credentials);
+            db = mongoClient.getDatabase(usedataBase);
+        } catch (Exception e) {
+        }
     }
 
-    public static MongoDatabase getMongoDB() {
-        return mongoDB;
+    public static MongoDatabase getDB() {
+
+        System.out.println("db=" + db);
+        return db;
     }
 }
